@@ -1,0 +1,180 @@
+@import "tailwindcss";
+
+/* ── Curia design system — Google Stitch / Material 3 expressive, light ──
+   Soft blue-grey canvas, white surfaces, Google-blue primary, big friendly
+   radii, pill buttons. The court should feel calm and procedural, not
+   bureaucratic. */
+
+:root {
+  --canvas:        #f0f4f9;   /* Material surface-container */
+  --canvas-deep:   #e8edf4;
+  --surface:       #ffffff;
+  --surface-dim:   #f8fafd;
+  --ink:           #1b1c1e;
+  --ink-soft:      #444746;
+  --muted:         #5f6368;
+  --primary:       #0b57d0;   /* Material 3 primary */
+  --primary-bright:#1a73e8;
+  --primary-soft:  #d3e3fd;   /* primary container */
+  --on-primary:    #ffffff;
+  --hairline:      #dde3ea;
+  --success:       #146c2e;
+  --success-soft:  #c4eed0;
+  --danger:        #b3261e;
+  --danger-soft:   #f9dedc;
+  --amber:         #974f00;
+  --amber-soft:    #ffdf99;
+}
+
+html { background: var(--canvas); }
+
+body {
+  background: var(--canvas);
+  color: var(--ink);
+  font-family: var(--font-sans), "Google Sans", system-ui, sans-serif;
+  -webkit-font-smoothing: antialiased;
+}
+
+.display { font-family: var(--font-sans), system-ui, sans-serif; font-weight: 600; letter-spacing: -0.02em; }
+.mono    { font-family: var(--font-mono), ui-monospace, monospace; }
+
+.eyebrow {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--primary);
+}
+
+.text-ink   { color: var(--ink); }
+.text-soft  { color: var(--ink-soft); }
+.text-muted { color: var(--muted); }
+
+/* Surfaces */
+.card {
+  background: var(--surface);
+  border: 1px solid var(--hairline);
+  border-radius: 24px;
+  transition: box-shadow 0.2s ease, transform 0.2s ease;
+}
+.card-hover:hover {
+  box-shadow: 0 4px 16px rgba(11, 87, 208, 0.10), 0 1px 3px rgba(0,0,0,0.06);
+  transform: translateY(-2px);
+}
+.card-tonal {
+  background: var(--primary-soft);
+  border: 1px solid transparent;
+  border-radius: 24px;
+}
+
+.hairline { height: 1px; background: var(--hairline); }
+
+/* Buttons — Material pills */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  height: 44px;
+  padding: 0 22px;
+  border-radius: 9999px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.15s ease, box-shadow 0.15s ease, transform 0.1s ease;
+  white-space: nowrap;
+}
+.btn:disabled { opacity: 0.5; cursor: not-allowed; }
+
+.btn-primary {
+  background: var(--primary);
+  color: var(--on-primary);
+}
+.btn-primary:hover:not(:disabled) {
+  background: var(--primary-bright);
+  box-shadow: 0 2px 8px rgba(11, 87, 208, 0.35);
+}
+
+.btn-tonal {
+  background: var(--primary-soft);
+  color: var(--primary);
+}
+.btn-tonal:hover:not(:disabled) { background: #c2d7fb; }
+
+.btn-ghost {
+  background: transparent;
+  color: var(--primary);
+  border: 1px solid var(--hairline);
+}
+.btn-ghost:hover:not(:disabled) { background: rgba(11, 87, 208, 0.06); }
+
+.btn-danger {
+  background: var(--danger-soft);
+  color: var(--danger);
+}
+.btn-danger:hover:not(:disabled) { background: #f5c9c5; }
+
+/* Chips — Material assist chips */
+.chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  height: 26px;
+  padding: 0 12px;
+  border-radius: 9999px;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+}
+.chip-open        { background: var(--success-soft); color: var(--success); }
+.chip-closed      { background: var(--amber-soft);   color: var(--amber); }
+.chip-adjudicated { background: var(--primary-soft); color: var(--primary); }
+.chip-neutral     { background: var(--canvas-deep);  color: var(--muted); }
+.chip-award       { background: var(--primary);      color: var(--on-primary); }
+.chip-noaward     { background: var(--danger-soft);  color: var(--danger); }
+
+/* Inputs — Material filled fields */
+.input {
+  width: 100%;
+  background: var(--surface-dim);
+  border: 1px solid var(--hairline);
+  border-radius: 14px;
+  padding: 12px 16px;
+  font-size: 14px;
+  color: var(--ink);
+  outline: none;
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+}
+.input:focus {
+  border-color: var(--primary);
+  box-shadow: 0 0 0 3px rgba(11, 87, 208, 0.12);
+}
+.input::placeholder { color: var(--muted); opacity: 0.7; }
+
+textarea.input { min-height: 110px; resize: vertical; }
+
+label.field-label {
+  display: block;
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--ink-soft);
+  margin-bottom: 6px;
+}
+
+/* Animations */
+@keyframes fade-in { from { opacity: 0 } to { opacity: 1 } }
+.animate-fade-in { animation: fade-in 0.2s ease both; }
+
+@keyframes slide-in { from { transform: translateX(24px); opacity: 0 } to { transform: none; opacity: 1 } }
+.animate-slide-in { animation: slide-in 0.22s ease both; }
+
+@keyframes blob-drift {
+  0%   { transform: translate(0, 0) scale(1); }
+  33%  { transform: translate(40px, -30px) scale(1.08); }
+  66%  { transform: translate(-30px, 24px) scale(0.95); }
+  100% { transform: translate(0, 0) scale(1); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .animate-fade-in, .animate-slide-in { animation: none; }
+}
