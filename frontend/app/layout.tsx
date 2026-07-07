@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Figtree, JetBrains_Mono } from "next/font/google";
+import { Roboto_Serif, Roboto_Flex, Roboto_Mono } from "next/font/google";
 import Link from "next/link";
 import "./globals.css";
 import { Providers } from "./providers";
@@ -8,8 +8,9 @@ import { Backdrop } from "@/components/Backdrop";
 import { NetworkBanner } from "@/components/NetworkBanner";
 import { CONTRACT_ADDRESS, explorerAddressUrl } from "@/lib/config";
 
-const sans = Figtree({ subsets: ["latin"], variable: "--font-sans" });
-const mono = JetBrains_Mono({ subsets: ["latin"], variable: "--font-mono" });
+const display = Roboto_Serif({ subsets: ["latin"], weight: ["500", "600", "700"], variable: "--font-display" });
+const sans = Roboto_Flex({ subsets: ["latin"], variable: "--font-sans" });
+const mono = Roboto_Mono({ subsets: ["latin"], variable: "--font-mono" });
 
 export const metadata: Metadata = {
   title: "Curia — the GenLayer allocation court",
@@ -19,7 +20,7 @@ export const metadata: Metadata = {
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="en" className={`${sans.variable} ${mono.variable}`}>
+    <html lang="en" className={`${display.variable} ${sans.variable} ${mono.variable}`}>
       <body className="min-h-screen flex flex-col">
         <Providers>
           <Backdrop />

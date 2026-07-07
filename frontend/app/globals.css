@@ -35,13 +35,15 @@ body {
   -webkit-font-smoothing: antialiased;
 }
 
-.display { font-family: var(--font-sans), system-ui, sans-serif; font-weight: 600; letter-spacing: -0.02em; }
+/* Roboto Serif for display headings — court gravitas; Roboto Flex body. */
+.display { font-family: var(--font-display), Georgia, serif; font-weight: 600; letter-spacing: -0.01em; }
 .mono    { font-family: var(--font-mono), ui-monospace, monospace; }
 
 .eyebrow {
+  font-family: var(--font-mono), monospace;
   font-size: 11px;
-  font-weight: 700;
-  letter-spacing: 0.14em;
+  font-weight: 600;
+  letter-spacing: 0.12em;
   text-transform: uppercase;
   color: var(--primary);
 }
@@ -50,21 +52,24 @@ body {
 .text-soft  { color: var(--ink-soft); }
 .text-muted { color: var(--muted); }
 
-/* Surfaces */
+/* Surfaces — Material 3 tonal elevation (soft layered shadow, faint border) */
 .card {
   background: var(--surface);
   border: 1px solid var(--hairline);
   border-radius: 24px;
-  transition: box-shadow 0.2s ease, transform 0.2s ease;
+  box-shadow: 0 1px 2px rgba(11,32,72,0.05), 0 4px 12px -6px rgba(11,32,72,0.08);
+  transition: box-shadow 0.22s ease, transform 0.22s ease, border-color 0.22s ease;
 }
 .card-hover:hover {
-  box-shadow: 0 4px 16px rgba(11, 87, 208, 0.10), 0 1px 3px rgba(0,0,0,0.06);
-  transform: translateY(-2px);
+  box-shadow: 0 6px 22px -6px rgba(11,87,208,0.18), 0 2px 6px rgba(11,32,72,0.08);
+  border-color: #cdd9ec;
+  transform: translateY(-3px);
 }
 .card-tonal {
   background: var(--primary-soft);
   border: 1px solid transparent;
   border-radius: 24px;
+  box-shadow: 0 1px 2px rgba(11,32,72,0.04);
 }
 
 .hairline { height: 1px; background: var(--hairline); }
@@ -89,10 +94,12 @@ body {
 .btn-primary {
   background: var(--primary);
   color: var(--on-primary);
+  box-shadow: 0 1px 2px rgba(11,87,208,0.30), 0 1px 3px rgba(0,0,0,0.10);
 }
 .btn-primary:hover:not(:disabled) {
   background: var(--primary-bright);
-  box-shadow: 0 2px 8px rgba(11, 87, 208, 0.35);
+  box-shadow: 0 2px 6px rgba(11,87,208,0.35), 0 4px 14px -4px rgba(11,87,208,0.45);
+  transform: translateY(-1px);
 }
 
 .btn-tonal {
