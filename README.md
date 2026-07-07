@@ -55,9 +55,16 @@ must converge before anything pays out.
 ## Structure
 
 ```
-├── contracts/curia.py     # the Intelligent Contract (single ruling per round)
-├── tests/direct/          # 27 deterministic tests (stubbed GenLayer runtime)
-└── frontend/              # Next.js 16 — Google Stitch / Material 3 light design
+├── contracts/
+│   └── curia.py           # the Intelligent Contract (single ruling per round)
+├── deploy/
+│   └── deployScript.ts    # genlayer-js deploy script (boilerplate format)
+├── tests/
+│   └── direct/            # 27 deterministic tests (stubbed GenLayer runtime)
+├── frontend/              # Next.js 16 — Google Stitch / Material 3 light design
+├── gltest.config.yaml     # GenLayer testing-suite network config
+├── pyproject.toml
+└── requirements.txt       # genlayer-py / genlayer-test / genvm-linter pins
 ```
 
 ## Frontend
