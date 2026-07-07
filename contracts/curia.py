@@ -238,8 +238,9 @@ class Curia(gl.Contract):
             raise gl.vm.UserError("Every tier share must be positive")
         if sum(tiers) != BPS_TOTAL:
             raise gl.vm.UserError(f"Tier shares must sum to {BPS_TOTAL} bps")
-        if tiers != sorted(tiers, reverse=True):
-            raise gl.vm.UserError("Tiers must be in descending order (1st place first)")
+        # Non-ascending: 1st place first; equal shares (ties) are allowed.
+        if any(tiers[i] < tiers[i + 1] for i in range(len(tiers) - 1)):
+            raise gl.vm.UserError("Tiers must be non-ascending (1st place first; ties allowed)")
 
         self.round_counter = u256(int(self.round_counter) + 1)
         round_id = str(int(self.round_counter))

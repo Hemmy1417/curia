@@ -205,12 +205,19 @@ def test_create_round_rejects_bad_tiers(module):
     _as(module, SPONSOR, POOL)
     with pytest.raises(module.gl.vm.UserError, match="sum"):
         c.create_round("Summer Grants", BRIEF, CRIT, [5000, 3000])
-    with pytest.raises(module.gl.vm.UserError, match="descending"):
+    with pytest.raises(module.gl.vm.UserError, match="non-ascending"):
         c.create_round("Summer Grants", BRIEF, CRIT, [2000, 3000, 5000])
     with pytest.raises(module.gl.vm.UserError, match="positive"):
         c.create_round("Summer Grants", BRIEF, CRIT, [10000, 0])
     with pytest.raises(module.gl.vm.UserError, match="tiers"):
         c.create_round("Summer Grants", BRIEF, CRIT, [4000, 3000, 1500, 800, 500, 200])
+
+
+def test_create_round_allows_equal_tiers(module):
+    c = module.Curia()
+    _as(module, SPONSOR, POOL)
+    rnd = c.create_round("Summer Grants", BRIEF, CRIT, [3334, 3333, 3333])
+    assert rnd["tiers_bps"] == [3334, 3333, 3333]
 
 
 # ── Entries ──────────────────────────────────────────────────────────────────
