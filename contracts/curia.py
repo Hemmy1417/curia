@@ -34,6 +34,18 @@ GUARDRAILS:
 """
 
 
+# Empty EVM interface: paying an EOA is an external message through the
+# chain layer (the IC's ghost contract executes it), NOT a GenVM call —
+# gl.get_contract_at(...).emit_transfer on a plain wallet errors and the
+# value is lost. Verified empirically on round 1's stranded payouts.
+@gl.evm.contract_interface
+class _Payee:
+    class View:
+        pass
+    class Write:
+        pass
+
+
 class Curia(gl.Contract):
     """
     Curia — the GenLayer allocation court.
@@ -113,10 +125,9 @@ class Curia(gl.Contract):
 
     def _pay(self, to: str, amount_wei: int) -> None:
         if amount_wei > 0:
-            gl.get_contract_at(Address(to)).emit_transfer(
-                value=u256(amount_wei),
-                on="finalized",
-            )
+            # External message — the only correct way to send GEN to a
+            # wallet. Executes at finalization (the only supported mode).
+            _Payee(Address(to)).emit_transfer(value=u256(amount_wei))
 
     def _fetch_evidence_block(self, urls: list, per_url_cap: int) -> str:
         snippets = []
