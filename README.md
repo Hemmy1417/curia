@@ -77,18 +77,29 @@ must converge before anything pays out.
 
 Every write surfaces its transaction hash with a Studionet explorer link.
 
-### Signed writes
+### Signed writes (judge-feedback fix, 2026-07-14)
 
-The wallet context (`lib/genlayer/wallet.tsx`) creates one provider-backed
-genlayer-js client — `createClient({ chain, account, provider })` with the
-EIP-1193 provider the user picked (EIP-6963 discovery) — and
-`useCuriaContract` injects that client into the contract wrapper. The wrapper
-signs every write through it and **refuses to write when no wallet is
-connected** — it never falls back to a bare (unsigned) client or to
-`window.ethereum`. `frontend/tests/signed-write.test.ts` pins this: writes
-route through the injected client, disconnected writes throw, and the signing
-request (`eth_sendTransaction`) reaches the injected provider with the
-connected account as `from`. Run with `npm test` in `frontend/`.
+**What was flagged:** the wallet context created a provider-backed client,
+but the Curia write wrapper built its own separate client without that
+provider — so signed contract writes were never explicitly established (they
+worked only through genlayer-js's implicit `window.ethereum` fallback, which
+breaks with any non-default EIP-6963 wallet).
+
+**The fix:** the wallet context (`lib/genlayer/wallet.tsx`) creates one
+provider-backed genlayer-js client — `createClient({ chain, account,
+provider })` with the EIP-1193 provider the user picked — and
+`useCuriaContract` (`lib/hooks/useCuria.ts`) now injects that client into the
+contract wrapper (`lib/contracts/curia.ts`). The wrapper signs every write
+through the injected client and **refuses to write when no wallet is
+connected** — it never builds its own signer and never falls back to a bare
+(unsigned) client or to `window.ethereum`. Reads keep a wallet-less RPC
+fallback so the app renders before a wallet is connected.
+
+**The proof:** `frontend/tests/signed-write.test.ts` (run with `npm test` in
+`frontend/`) pins the contract at the repository level: writes route through
+the injected client, disconnected writes throw instead of silently falling
+back, and the signing request (`eth_sendTransaction`) reaches the injected
+EIP-1193 provider with the connected account as `from`.
 
 ## Running locally
 
