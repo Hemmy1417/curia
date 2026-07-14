@@ -55,13 +55,24 @@ class Curia {
       throw new Error("Validators could not reach consensus — try again");
     }
     if (r?.execution_result === "ERROR") {
+      // A clean gl.vm.UserError revert arrives with EMPTY stderr — its
+      // message rides in a rollback "payload" field. Walk the receipt for
+      // it, or every contract-level rejection is swallowed silently.
+      const payloads: string[] = [];
+      const walk = (o: any, d = 0) => {
+        if (!o || d > 8) return;
+        if (Array.isArray(o)) { o.forEach((x) => walk(x, d + 1)); return; }
+        if (typeof o === "object") {
+          if (typeof o.payload === "string" && o.payload && o.payload !== "exit_code 1") payloads.push(o.payload);
+          Object.values(o).forEach((v) => walk(v, d + 1));
+        }
+      };
+      walk(receipt);
       const stderr: string = r?.genvm_result?.stderr ?? "";
       const userErr = stderr.match(/UserError: (.+)/)?.[1];
-      if (userErr) throw new Error(userErr);
-      const lines = stderr.trim().split("\n").filter((l) => l.trim() && !l.startsWith("  "));
-      const last = lines[lines.length - 1] || "";
-      console.error("[Curia] contract execution error:", stderr);
-      throw new Error(last.replace(/^.*?Error: /, "").slice(0, 200) || "Contract execution error");
+      const msg = userErr || payloads.sort((a, b) => b.length - a.length)[0] || "";
+      console.error("[Curia] contract execution error:", { payloads, stderr });
+      throw new Error((msg || "Contract execution error — see console").slice(0, 240));
     }
     return receipt as TransactionReceipt;
   }
