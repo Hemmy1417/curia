@@ -9,11 +9,14 @@ import { success, error } from "../toast";
 import type { Round, Entry, Verdict, ProtocolStats } from "../contracts/types";
 
 export function useCuriaContract(): Curia | null {
-  const { address } = useWallet();
+  // The wallet context owns the ONE provider-backed client (created with the
+  // connected EIP-1193 provider). Injecting it here is what makes writes
+  // signed by the user's wallet — the wrapper never builds its own signer.
+  const { client } = useWallet();
   return useMemo(() => {
     if (!CONTRACT_CONFIGURED) return null;
-    return new Curia(CONTRACT_ADDRESS, address || null);
-  }, [address]);
+    return new Curia(CONTRACT_ADDRESS, client);
+  }, [client]);
 }
 
 // ── READ HOOKS ──────────────────────────────────────────────────────────────

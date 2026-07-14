@@ -77,6 +77,19 @@ must converge before anything pays out.
 
 Every write surfaces its transaction hash with a Studionet explorer link.
 
+### Signed writes
+
+The wallet context (`lib/genlayer/wallet.tsx`) creates one provider-backed
+genlayer-js client — `createClient({ chain, account, provider })` with the
+EIP-1193 provider the user picked (EIP-6963 discovery) — and
+`useCuriaContract` injects that client into the contract wrapper. The wrapper
+signs every write through it and **refuses to write when no wallet is
+connected** — it never falls back to a bare (unsigned) client or to
+`window.ethereum`. `frontend/tests/signed-write.test.ts` pins this: writes
+route through the injected client, disconnected writes throw, and the signing
+request (`eth_sendTransaction`) reaches the injected provider with the
+connected account as `from`. Run with `npm test` in `frontend/`.
+
 ## Running locally
 
 ```bash

@@ -5,6 +5,8 @@ import type {
 } from "./types";
 import { CONTRACT_ADDRESS } from "../config";
 
+export type GenLayerClient = ReturnType<typeof createClient>;
+
 /**
  * Typed wrapper around the deployed Curia contract. Sibling conventions:
  * - Every u256 is coerced to Number / decimal string HERE so no BigInt
@@ -13,16 +15,21 @@ import { CONTRACT_ADDRESS } from "../config";
  * - Reads are defensive (null/[] on failure) so a fresh deploy renders
  *   empty states, not error boundaries.
  * - Writes return { receipt, txHash } so toasts can link the explorer.
+ * - Writes sign through the wallet: the provider-backed client created by
+ *   the wallet context (WalletProvider) is injected here and is the ONLY
+ *   client writes go through — no bare client, no window.ethereum fallback.
+ *   Reads fall back to a wallet-less RPC client so the app renders before
+ *   a wallet is connected.
  */
 class Curia {
-  private client: ReturnType<typeof createClient>;
+  private client: GenLayerClient;          // reads: wallet client when connected, bare RPC otherwise
+  private signer: GenLayerClient | null;   // writes: only the provider-backed wallet client
   private address: `0x${string}`;
 
-  constructor(contractAddress: string = CONTRACT_ADDRESS, account?: string | null) {
+  constructor(contractAddress: string = CONTRACT_ADDRESS, walletClient?: GenLayerClient | null) {
     this.address = contractAddress as `0x${string}`;
-    const config: any = { chain: studionet };
-    if (account) config.account = account as `0x${string}`;
-    this.client = createClient(config);
+    this.signer = walletClient ?? null;
+    this.client = walletClient ?? createClient({ chain: studionet });
   }
 
   // ── helpers ────────────────────────────────────────────────────────────
@@ -77,7 +84,12 @@ class Curia {
     args: any[],
     value: bigint = BigInt(0),
   ): Promise<{ receipt: TransactionReceipt; txHash: string }> {
-    const txHash = await this.client.writeContract({
+    // Signed writes MUST go through the wallet's provider-backed client —
+    // fail loudly rather than fall back to an unsigned bare client.
+    if (!this.signer) {
+      throw new Error("Connect a wallet to sign this transaction");
+    }
+    const txHash = await this.signer.writeContract({
       address: this.address,
       functionName,
       args,
